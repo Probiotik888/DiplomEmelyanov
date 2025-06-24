@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="auth-container">
+    <h2>Регистрация</h2>
+    <form method="POST">
+        <input type="text" name="username" placeholder="Имя пользователя" required>
+        <div class="password-field">
+            <input type="password" name="password" placeholder="Пароль" id="password" required>
+            <span class="toggle-password" onclick="togglePassword('password', this)">👁</span>
+        </div>
+        <div class="password-field">
+            <input type="password" name="confirm_password" placeholder="Подтвердите пароль" id="confirm_password"
+                   required>
+            <span class="toggle-password" onclick="togglePassword('confirm_password', this)">👁</span>
+        </div>
+        <button type="submit" class="button">Зарегистрироваться</button>
+    </form>
+    {% if message %}
+    <p class="error-message">{{ message }}</p>
+    {% endif %}
+    <p>Уже есть аккаунт? <a href="{{ url_for('login') }}">Войти</a></p>
+</div>
+<script>
+    function togglePassword(id, icon) {
+        const input = document.getElementById(id);
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+</script>
+</body>
+</html>

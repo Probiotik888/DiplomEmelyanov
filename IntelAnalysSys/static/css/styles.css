@@ -1,0 +1,259 @@
+/* === Общие стили === */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fb;
+    color: #333;
+}
+
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+header {
+    background-color: #007BFF;
+    padding: 20px 0;
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+header .logo h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+header .logout-button {
+    background-color: #6c757d;
+    border-radius: 5px;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+header .logout-button:hover {
+    background-color: #5a6268;
+}
+
+main {
+    margin-top: 40px;
+}
+
+/* === Блок введения / приветствия === */
+.intro {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.intro h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.intro p {
+    font-size: 18px;
+    color: #555;
+}
+
+/* === Форма загрузки и действия === */
+.form-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.form-section h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.form-section input[type="file"] {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+/* === Кнопки === */
+.button {
+    padding: 12px 20px;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between; /* или flex-end */
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.button:hover {
+    transform: scale(1.05);
+}
+
+.button.primary {
+    background-color: #007BFF;
+}
+
+.button.primary:hover {
+    background-color: #0056b3;
+}
+
+.button.danger {
+    background-color: #ff4d4d;
+}
+
+.button.danger:hover {
+    background-color: #e03e3e;
+}
+
+.button.secondary {
+    background-color: #28a745;
+}
+
+.button.secondary:hover {
+    background-color: #218838;
+}
+
+/* === Сообщения === */
+.alert.success {
+    padding: 15px;
+    background-color: #4CAF50;
+    color: white;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* === Авторизация и регистрация === */
+.auth-container {
+    width: 400px;
+    margin: 80px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+
+.auth-container h2 {
+    margin-bottom: 20px;
+    color: #007BFF;
+}
+
+.auth-container input[type="text"],
+.auth-container input[type="password"] {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.password-field {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #555;
+}
+
+.auth-container .button {
+    width: 100%;
+}
+
+/* === Таблицы === */
+table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table.data th, table.data td {
+    padding: 12px 20px;
+    text-align: left;
+    border-bottom: 2px solid #ddd;
+}
+
+table.data th {
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+}
+
+table.data td {
+    font-size: 14px;
+    color: #555;
+}
+
+table.data tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table.data tr:hover {
+    background-color: #f1f1f1;
+}
+
+table.data td a {
+    color: #007BFF;
+    text-decoration: none;
+}
+
+table.data td a:hover {
+    text-decoration: underline;
+}
+
+/* === Футер === */
+footer {
+    background-color: #f1f1f1;
+    padding: 20px 0;
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+}
+
+footer p {
+    margin: 0;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализ отзывов</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<header class="header">
+    <nav>
+        <div class="logo">
+            <h1>Интеллектуальный Анализ Отзывов</h1>
+        </div>
+        <a href="{{ url_for('logout') }}" class="button logout-button">Выйти</a>
+    </nav>
+</header>
+
+<main>
+    <div class="container">
+        <section class="intro">
+            <h2>Добро пожаловать в систему анализа отзывов</h2>
+            <p>Загрузите CSV-файл с отзывами и получите полезные данные о настроениях и оценках ваших клиентов.</p>
+        </section>
+
+        <section class="form-section">
+            <h3>Загрузите файл для анализа:</h3>
+            <form action="/analyze" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".csv" required>
+                <button type="submit" class="button primary">Анализировать отзывы</button>
+            </form>
+        </section>
+
+        <section class="actions">
+            <p>Нажмите ниже, чтобы очистить таблицу данных или просмотреть итоги анализа.</p>
+            <form action="/clear" method="POST">
+                <button type="submit" class="button danger">Очистить таблицу</button>
+            </form>
+            <a href="{{ url_for('analyze') }}" class="button primary">Перейти к итогам анализа</a>
+        </section>
+
+        {% if message %}
+        <div class="alert success">
+            <strong>{{ message }}</strong>
+        </div>
+        {% endif %}
+    </div>
+</main>
+
+<footer>
+    <p>© 2025 Система анализа отзывов. Все права защищены.</p>
+</footer>
+</body>
+</html>

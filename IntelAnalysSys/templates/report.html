@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отчёт об анализе отзывов</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Фильтры */
+        .filter-container {
+            margin-bottom: 20px;
+        }
+
+        .filter-container input,
+        .filter-container select,
+        .filter-container button {
+            padding: 8px;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        /* Сортировка */
+        th.sortable {
+            cursor: pointer;
+            position: sticky;
+            top: 0;
+            background: #f9f9f9;
+            z-index: 2;
+        }
+
+        th.sortable:hover {
+            background-color: #eee;
+        }
+
+        /* Таблица */
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        table.data {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table.data th, table.data td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        /* Подсветка найденного текста */
+        mark {
+            background-color: yellow;
+            padding: 0;
+        }
+
+        /* Количество найденных записей */
+        .results-count {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        /* Плавная анимация исчезновения */
+        tr {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        tr.hide {
+            opacity: 0;
+            visibility: hidden;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="alert success">
+        <strong>Успех!</strong> Анализ отзывов успешно завершён.
+    </div>
+
+    <h1>Отчёт об анализе отзывов</h1>
+
+    <h2>Статистика отзывов</h2>
+    <img src="{{ url_for('static', filename='graphs/sentiment_pie.png') }}" alt="Диаграмма тональностей" width="400">
+
+    <h2>Проблемные товары</h2>
+    <img src="{{ url_for('static', filename='graphs/negative_products.png') }}" alt="Товары с негативными отзывами"
+         width="600">
+
+
+    <h1>Семантический анализ</h1>
+
+    <h2>Облако слов</h2>
+    <img src="{{ url_for('static', filename='graphs/wordcloud.png') }}" alt="Облако слов" width="600">
+
+    <h2>Наиболее частотные фразы</h2>
+    <img src="{{ url_for('static', filename='graphs/frequent_phrases.png') }}" alt="Частотные фразы" width="600">
+
+
+    <h2>Таблица всех отзывов</h2>
+
+    <!-- Фильтры -->
+    <div class="filter-container">
+        <input type="text" id="searchInput" placeholder="Поиск по названию товара">
+        <select id="sentimentFilter">
+            <option value="">Все тональности</option>
+            <option value="Положительный">Положительный</option>
+            <option value="Нейтральный">Нейтральный</option>
+            <option value="Отрицательный">Отрицательный</option>
+        </select>
+        <button onclick="resetFilters()">Сбросить фильтры</button>
+    </div>
+
+    <!-- Количество найденных записей -->
+    <div class="results-count" id="resultsCount">Найдено: {{ reviews|length }} отзывов</div>
+
+    <!-- Таблица -->
+    <div class="table-container">
+        <table class="data" id="reviewsTable">
+            <thead>
+            <tr>
+                <th class="sortable" onclick="sortTable(0)">ID</th>
+                <th class="sortable" onclick="sortTable(1)">Товар</th>
+                <th class="sortable" onclick="sortTable(2)">Отзыв</th>
+                <th class="sortable" onclick="sortTable(3)">Тональность</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for review in reviews %}
+            <tr class="{% if review.sentiment == 'Отрицательный' %}negative{% endif %}">
+                <td>{{ review.id }}</td>
+                <td class="product">{{ review.product }}</td>
+                <td>{{ review.review }}</td>
+                <td>{{ review.sentiment }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="button-container">
+        <button class="button primary" onclick="exportToExcel()">Скачать таблицу в Excel</button>
+        <form action="{{ url_for('download_pdf') }}" method="get">
+            <button type="submit" class="button primary">Скачать PDF-отчёт</button>
+        </form>
+        <a href="/" class="button primary">На главную</a>
+    </div>
+
+
+</div>
+
+<!-- Скрипт -->
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const sentimentFilter = document.getElementById('sentimentFilter');
+    const table = document.getElementById('reviewsTable');
+    const rows = table.getElementsByTagName('tr');
+    const resultsCount = document.getElementById('resultsCount');
+
+    function filterTable() {
+        const searchText = searchInput.value.toLowerCase();
+        const selectedSentiment = sentimentFilter.value;
+        let count = 0;
+
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            if (cells.length < 4) continue;
+
+            const productCell = cells[1];
+            const sentimentText = cells[3].textContent;
+
+            const productText = productCell.textContent.toLowerCase();
+            const matchesSearch = productText.includes(searchText);
+            const matchesSentiment = selectedSentiment === "" || sentimentText === selectedSentiment;
+
+            // Отображаем строку, если она соответствует фильтрам
+            if (matchesSearch && matchesSentiment) {
+                rows[i].classList.remove('hide');
+                count++;
+
+                // Подсветка поиска
+                const originalText = productCell.textContent;
+                if (searchText) {
+                    const regex = new RegExp(searchText, 'gi');
+                    productCell.innerHTML = originalText.replace(regex, '<mark>$&</mark>');
+                } else {
+                    productCell.innerHTML = originalText;
+                }
+            } else {
+                rows[i].classList.add('hide');
+            }
+        }
+
+        resultsCount.textContent = `Найдено: ${count} отзывов`;
+    }
+
+    function resetFilters() {
+        searchInput.value = "";
+        sentimentFilter.value = "";
+        filterTable();
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    sentimentFilter.addEventListener('change', filterTable);
+
+    let sortDirection = true;
+
+    function sortTable(columnIndex) {
+        const tbody = table.tBodies[0];
+        const rowsArray = Array.from(tbody.querySelectorAll('tr')).filter(row => !row.classList.contains('hide'));
+
+        rowsArray.sort((a, b) => {
+            const aText = a.children[columnIndex].textContent.trim();
+            const bText = b.children[columnIndex].textContent.trim();
+
+            if (columnIndex === 0) {
+                return sortDirection ? aText - bText : bText - aText;
+            }
+
+            return sortDirection
+                ? aText.localeCompare(bText, 'ru', {sensitivity: 'base'})
+                : bText.localeCompare(aText, 'ru', {sensitivity: 'base'});
+        });
+
+        rowsArray.forEach(row => tbody.appendChild(row));
+        sortDirection = !sortDirection;
+    }
+
+    function exportToExcel() {
+        const table = document.getElementById("reviewsTable");
+        const visibleRows = [];
+
+        const headers = Array.from(table.querySelectorAll("thead th")).map(th => th.textContent.trim());
+        visibleRows.push(headers);
+
+        const allRows = table.querySelectorAll("tbody tr");
+        allRows.forEach(row => {
+            if (!row.classList.contains("hide")) {
+                const cells = Array.from(row.querySelectorAll("td")).map(td => td.textContent.trim());
+                visibleRows.push(cells);
+            }
+        });
+
+        const worksheet = XLSX.utils.aoa_to_sheet(visibleRows);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Отзывы");
+
+        XLSX.writeFile(workbook, "отзывы_фильтр.xlsx");
+    }
+
+</script>
+
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+</body>
+</html>

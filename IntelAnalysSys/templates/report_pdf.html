@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF отчёт об анализе отзывов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #222;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .stat-img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eee;
+        }
+
+        .negative {
+            background-color: #f8d7da;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Отчёт об анализе отзывов</h1>
+
+<div class="section">
+    <h2>Статистика тональностей</h2>
+    <img src="{{ url_for('static', filename='graphs/sentiment_pie.png') }}" class="stat-img"
+         alt="Диаграмма тональностей">
+</div>
+
+<div class="section">
+    <h2>Проблемные товары</h2>
+    <img src="{{ url_for('static', filename='graphs/negative_products.png') }}" class="stat-img"
+         alt="Негативные отзывы по товарам">
+</div>
+
+<h1>Семантический анализ</h1>
+
+<div class="section">
+    <h2>Облако слов</h2>
+    <img src="{{ url_for('static', filename='graphs/wordcloud.png') }}" class="stat-img"
+         alt="Облако слов">
+</div>
+
+<div class="section">
+    <h2>Наиболее частотные фразы</h2>
+    <img src="{{ url_for('static', filename='graphs/frequent_phrases.png') }}" class="stat-img"
+         alt="Частотные фразы">
+</div>
+
+<div class="section">
+    <h2>Детализация отзывов</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Товар</th>
+            <th>Отзыв</th>
+            <th>Тональность</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for review in reviews %}
+        <tr class="{% if review.sentiment == 'Отрицательный' %}negative{% endif %}">
+            <td>{{ review.id }}</td>
+            <td>{{ review.product }}</td>
+            <td>{{ review.review }}</td>
+            <td>{{ review.sentiment }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<footer>
+    Сформировано автоматически системой анализа отзывов — {{ current_date }}
+</footer>
+
+</body>
+</html>
